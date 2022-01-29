@@ -2,6 +2,7 @@ package model
 
 import (
 	"github.com/dgrijalva/jwt-go"
+	"github.com/gin-gonic/gin"
 	"time"
 )
 
@@ -60,4 +61,17 @@ func (c *Claims) ParseToken(token string) error {
 	}
 
 	return err
+}
+
+func JWTVerify() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var customClaims Claims
+		token := c.Query("token")
+		if token == "" {
+			c.Set("claims", "无token需请求签名")
+		}
+		customClaims.ParseToken(token)
+		//上下文中设置claims
+		c.Set("claims", customClaims)
+	}
 }
